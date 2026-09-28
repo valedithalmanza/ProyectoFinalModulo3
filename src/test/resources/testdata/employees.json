@@ -1,0 +1,20 @@
+[
+  {
+    "firstName": "Auto",
+    "middleName": "M",
+    "lastName": "TesterOne",
+    "employeeId": "9001",
+    "username": "auto.tester.one",
+    "password": "Test@1234",
+    "status": "Enabled"
+  },
+  {
+    "firstName": "Auto",
+    "middleName": "M",
+    "lastName": "TesterTwo",
+    "employeeId": "9002",
+    "username": "auto.tester.two",
+    "password": "Test@1234",
+    "status": "Enabled"
+  }
+]
