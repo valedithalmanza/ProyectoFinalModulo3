@@ -26,6 +26,8 @@ public class DashboardPage extends BasePage {
      */
     public EmployeeListPage openPim() {
         clickElement(pimMenu);
-        return new EmployeeListPage(getDriver());
+        EmployeeListPage employeeList = new EmployeeListPage(getDriver());
+        employeeList.waitForLoad();
+        return employeeList;
     }
 }

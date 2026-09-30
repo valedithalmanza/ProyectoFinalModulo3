@@ -2,11 +2,10 @@ package com.orangehrm.tests;
 
 import com.orangehrm.base.BaseTest;
 import com.orangehrm.business.models.Employee;
-import com.orangehrm.business.pages.AddEmployeePage;
-import com.orangehrm.business.pages.DashboardPage;
 import com.orangehrm.business.pages.EmployeeListPage;
 import com.orangehrm.business.pages.LoginPage;
 import com.orangehrm.dataproviders.EmployeeDataProvider;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -15,26 +14,25 @@ import org.testng.annotations.Test;
 public class EmployeeCreationTest extends BaseTest {
 
     /**
-     * Creates an employee using test data.
+     * Verifies a created employee appears in the results grid.
      *
      * @param employee employee data
      */
     @Test(
-            description = "Create employee with login details",
+            description = "Created employee appears in the results grid",
             dataProvider = "employees",
             dataProviderClass = EmployeeDataProvider.class
     )
-    public void createEmployee(Employee employee) {
+    public void createdEmployeeAppearsInGrid(Employee employee) {
+        EmployeeListPage employeeList = new LoginPage(driver)
+                .loginAs(adminUsername, adminPassword)
+                .openPim()
+                .openAddEmployee()
+                .createEmployee(employee);
 
-        DashboardPage dashboard = new LoginPage(driver)
-                .loginAs(adminUsername, adminPassword);
+        employeeList.searchByName(employee.getFirstName());
 
-        EmployeeListPage employeeListPage =
-                dashboard.openPim();
-
-        AddEmployeePage addEmployeePage =
-                employeeListPage.openAddEmployee();
-
-        addEmployeePage.createEmployee(employee);
+        Assert.assertTrue(employeeList.containsEmployee(employee.getFirstName()),
+                "Created employee is missing from the results grid: " + employee);
     }
 }

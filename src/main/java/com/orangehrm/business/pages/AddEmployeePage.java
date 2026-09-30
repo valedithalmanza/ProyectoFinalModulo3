@@ -27,6 +27,11 @@ public class AddEmployeePage extends BasePage {
                     "/following-sibling::div//span[contains(@class,'oxd-switch-input')]"
     );
 
+    private final By createLoginDetailsCheckbox = By.xpath(
+            "//p[normalize-space()='Create Login Details']" +
+                    "/following-sibling::div//input[@type='checkbox']"
+    );
+
     private final By usernameInput = By.xpath(
             "//label[contains(normalize-space(),'Username')]" +
                     "/parent::div/following-sibling::div//input"
@@ -55,6 +60,12 @@ public class AddEmployeePage extends BasePage {
 
     private final By saveButton =
             By.xpath("//button[@type='submit' and normalize-space()='Save']");
+
+    private final By employeeListTab = By.xpath(
+            "//a[normalize-space()='Employee List' or normalize-space()='Lista de empleados']"
+    );
+
+    private final By formLoader = By.cssSelector(".oxd-form-loader");
 
     /**
      * Creates an AddEmployeePage using the current WebDriver.
@@ -102,10 +113,12 @@ public class AddEmployeePage extends BasePage {
     }
 
     /**
-     * Enables the Create Login Details option.
+     * Enables the Create Login Details option unless already enabled.
      */
     public void enableCreateLoginDetails() {
-        clickElement(createLoginDetailsSwitch);
+        if (!isSelected(createLoginDetailsCheckbox)) {
+            clickElement(createLoginDetailsSwitch);
+        }
     }
 
     /**
@@ -156,11 +169,12 @@ public class AddEmployeePage extends BasePage {
     }
 
     /**
-     * Creates a new employee with login details.
+     * Creates a new employee with login details and returns to the list.
      *
      * @param employee employee data
+     * @return the employee list page
      */
-    public void createEmployee(Employee employee) {
+    public EmployeeListPage createEmployee(Employee employee) {
         enterFirstName(employee.getFirstName());
         enterMiddleName(employee.getMiddleName());
         enterLastName(employee.getLastName());
@@ -174,5 +188,27 @@ public class AddEmployeePage extends BasePage {
         enterConfirmPassword(employee.getPassword());
 
         clickSave();
+        waitForSuccessToast();
+        return backToEmployeeList();
+    }
+
+    /**
+     * Waits until the add form is displayed.
+     */
+    public void waitForLoad() {
+        waitForVisible(firstNameInput);
+        waitForInvisible(formLoader);
+    }
+
+    /**
+     * Returns to the employee list through the top navigation.
+     *
+     * @return the employee list page
+     */
+    public EmployeeListPage backToEmployeeList() {
+        clickElement(employeeListTab);
+        EmployeeListPage employeeList = new EmployeeListPage(getDriver());
+        employeeList.waitForLoad();
+        return employeeList;
     }
 }

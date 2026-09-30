@@ -105,13 +105,14 @@ public class Employee {
     }
 
     /**
-     * Copies this employee with the run identifier applied to its unique fields.
+     * Copies this employee with unique values for a single test execution.
      *
-     * @param runId identifier unique to the current execution
-     * @return a new employee ready to be created in this run
+     * @param runId identifier stamped onto the first name and username
+     * @param employeeNumber identifier replacing the file employee number
+     * @return a new employee ready to be created in this execution
      */
-    public Employee withRunId(String runId) {
-        return new Employee(firstName + runId, middleName, lastName, employeeId,
+    public Employee withUniqueValues(String runId, String employeeNumber) {
+        return new Employee(firstName + runId, middleName, lastName, employeeNumber,
                 username + "." + runId.toLowerCase(), password, status);
     }
 

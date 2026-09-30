@@ -1,6 +1,5 @@
 package com.orangehrm.core.waits;
 
-import com.orangehrm.core.config.ConfigReader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,23 +7,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 /**
  * Centralizes every explicit wait of the framework.
  */
 public class WaitUtils {
 
-    private final WebDriver driver;
-    private final long timeoutSeconds;
-
-    /**
-     * Creates waits with the timeout from the framework configuration.
-     *
-     * @param driver driver used to poll the page
-     */
-    public WaitUtils(WebDriver driver) {
-        this(driver, ConfigReader.getTimeoutSeconds());
-    }
+    private final WebDriverWait wait;
 
     /**
      * Creates waits with an explicit timeout.
@@ -33,8 +23,7 @@ public class WaitUtils {
      * @param timeoutSeconds maximum wait per condition, in seconds
      */
     public WaitUtils(WebDriver driver, long timeoutSeconds) {
-        this.driver = driver;
-        this.timeoutSeconds = timeoutSeconds;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
     }
 
     /**
@@ -44,7 +33,7 @@ public class WaitUtils {
      * @return the visible element
      */
     public WebElement visibilityOf(By locator) {
-        return newWait().until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     /**
@@ -54,7 +43,7 @@ public class WaitUtils {
      * @return the clickable element
      */
     public WebElement clickableOf(By locator) {
-        return newWait().until(ExpectedConditions.elementToBeClickable(locator));
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
     /**
@@ -64,7 +53,7 @@ public class WaitUtils {
      * @return {@code true} when the title matched before the timeout
      */
     public boolean titleContains(String text) {
-        return newWait().until(ExpectedConditions.titleContains(text));
+        return wait.until(ExpectedConditions.titleContains(text));
     }
 
     /**
@@ -74,15 +63,17 @@ public class WaitUtils {
      * @return {@code true} when the URL matched before the timeout
      */
     public boolean urlContains(String fragment) {
-        return newWait().until(ExpectedConditions.urlContains(fragment));
+        return wait.until(ExpectedConditions.urlContains(fragment));
     }
 
     /**
-     * Builds a fresh wait for a single condition.
+     * Waits until the given condition holds.
      *
-     * @return a wait bound to this helper driver and timeout
+     * @param condition condition evaluated against the driver
+     * @param <T> result type of the condition
+     * @return the condition result
      */
-    private WebDriverWait newWait() {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
+    public <T> T until(Function<WebDriver, T> condition) {
+        return wait.until(condition);
     }
 }
