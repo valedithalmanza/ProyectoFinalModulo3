@@ -5,40 +5,25 @@ package com.orangehrm.core.utils;
  */
 public final class DataGenerator {
 
-    /**
-     * Identifier shared by every value generated during the current run.
-     */
-    private static final String RUN_ID = "T" + Long.toString(System.currentTimeMillis(), 36).toUpperCase();
-
     private DataGenerator() {
     }
 
     /**
-     * Returns the identifier shared by the current run.
+     * Builds an identifier unique to a single data provider invocation.
      *
-     * @return the run identifier, unique per execution
+     * @return a new run identifier on every call
      */
-    public static String getRunId() {
-        return RUN_ID;
+    public static String newRunId() {
+        return "T" + Long.toString(System.currentTimeMillis(), 36).toUpperCase()
+                + Long.toString(Math.abs(System.nanoTime() % 1296), 36).toUpperCase();
     }
 
     /**
-     * Builds a first name that is unique for the current run.
+     * Builds a numeric employee number unique to a single data provider invocation.
      *
-     * @param baseName stable first name read from the data file
-     * @return the base name suffixed with the run identifier
+     * @return a new numeric identifier on every call
      */
-    public static String uniqueFirstName(String baseName) {
-        return baseName + RUN_ID;
-    }
-
-    /**
-     * Builds a username that is unique for the current run.
-     *
-     * @param baseUsername stable username read from the data file
-     * @return the base username suffixed with the run identifier
-     */
-    public static String uniqueUsername(String baseUsername) {
-        return baseUsername + "." + RUN_ID.toLowerCase();
+    public static String newEmployeeNumber() {
+        return String.format("%06d", Math.abs(System.nanoTime() % 1000000L));
     }
 }

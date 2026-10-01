@@ -25,10 +25,12 @@ public class EmployeeDataProvider {
      */
     @DataProvider(name = "employees")
     public Object[] employees() throws FileNotFoundException {
+        String runId = DataGenerator.newRunId();
         Object[] rows = JsonTestDataHelper.getInstance().getTestData(EMPLOYEES_JSON, Employee.class);
         Object[] stamped = new Object[rows.length];
         for (int i = 0; i < rows.length; i++) {
-            stamped[i] = ((Employee) rows[i]).withRunId(DataGenerator.getRunId());
+            stamped[i] = ((Employee) rows[i])
+                    .withUniqueValues(runId, DataGenerator.newEmployeeNumber());
         }
         return stamped;
     }
